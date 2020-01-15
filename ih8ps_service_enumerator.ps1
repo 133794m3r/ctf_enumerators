@@ -20,7 +20,7 @@ function get_vuln_services($user){
 6) Then I remove the HKEY_LOCAL_MACHINE prefix.
 7) Then it sets the value to be the variable $services.
 #>
-$services=(Get-ChildItem 'HKLM:\SYSTEM\CurrentControlSet\Services' | Get-ItemProperty -name ServiceSidType, ObjectName -ErrorAction SilentlyContinue | Where-Object { $_.ServiceSidType -eq 1 -and $_.ObjectName -eq 'LocalSystem' } | findstr "Name" | $_.split(':')[1].substring(1))
+$services=(Get-ChildItem 'HKLM:\SYSTEM\CurrentControlSet\Services' | Get-ItemProperty -name ServiceSidType, ObjectName -ErrorAction SilentlyContinue | Where-Object { $_.ServiceSidType -eq 1 -and $_.ObjectName -eq 'LocalSystem' } | findstr "PSChildName" | foreach-object {$_.split(':')[1].substring(1)});
 	#Some variable intializations.
 	$current_acl=''
 	$command=''
