@@ -1,9 +1,11 @@
 <#
 # I hate PowerShell Service Enumerator
 # (C) Macarthur Inbody AGPLv3 2020
-# This script will enumerate through services finding one where you have
-# the ability to start it and also are able to change where the image is stored.
-# Not a great script. But it works.
+# The primary purpose of this script is to find all services where you're able 
+# to modify it to do DLL injection and the service you're attacking is run as 
+#SYSTEM user. Further it'll make sure that your user is able to do this.
+# It'll give you a list of all of the possible services at the end reducing
+# your search space.
 # Basically it's looking for services where the listed user is in the ACL, that they have full control.
 # It's also making sure we have the ability to modify things.
 # The one thing it doesn't do is modify the registry settings.
