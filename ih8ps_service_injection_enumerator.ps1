@@ -36,7 +36,7 @@ $services=(Get-ChildItem 'HKLM:\SYSTEM\CurrentControlSet\Services' | Get-ItemPro
 		 # 3) finds the string "Hector"(our user's name) in it.
 		 # If it doesn't we don't match anything.
 		#>
-		$current_acl=(get-acl " HKLM:\SYSTEM\CurrentControlset\services\$service"| format-list | findstr "$user")
+		$current_acl=(get-acl "HKLM:\SYSTEM\CurrentControlset\services\$service"| format-list | findstr "$user")
 		#Check to make sure that it has the word Full in it.
 		if ($current_acl -match "Full"){
 			<#
