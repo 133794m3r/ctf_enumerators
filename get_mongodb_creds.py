@@ -22,8 +22,8 @@ def mongo_get_creds(url=None,usernames=None,character_set=None,jitter=None):
 	if usernames is None:
 	username=""
 	if url is None:
-		#the url we're targetting.
-		url=input("Enter the URL you want to target."
+		#the url we're targetting. It needs to be the full url that you're targetting.
+		url=input("Enter the URL you want to target: "
 	#the characterset we're using.
 	if character_set is None:
 		#by default we're not using * or ..
