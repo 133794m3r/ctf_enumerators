@@ -6,8 +6,8 @@ Includes the following services/abilities.
 This works only through a NoSQL injection that utilizes the REGEX operator inside of MongoDB. This lets us write a regex expression that gets us every possible character that any username or password contains. Then we utilize this information to build the username and password lists. It does this in optimal time. The Time is O(n+m^l) where n is the total characterset(printable ascii in this case). m is number of unique characters in the password/username. l is the length of the password/username. It is always faster than trying all possible characters for all positions because unless the length of the username/password is 93 characters(the default characterset). 
 
 If it is 92 charaters long then time will be.
-93+(92^92) or 4.661010870363696*10^180
-If we tried all possible characters in all possible positions it'd be 1.260176182005854*10^181
+93+(92^92) or 4.661010870363696\*10^180
+If we tried all possible characters in all possible positions it'd be 1.260176182005854\*10^181
 Or roughly 1/3rd the amount of operations. This is where knowing some complexity analysis will greatly help you.
 
 The script will also show you the password/username characterset after it gets it, along with the username(s) and password(s) that it is able to utilize.
