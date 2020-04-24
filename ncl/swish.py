@@ -20,7 +20,7 @@ def check(i_str:str,i:int) -> bool:
 
 	return check10(i_str,i)
 
-def check2(i_str:str,i:int):
+def check2(i_str:str,i:int) -> bool:
 	if i_str[0:1] == chr(d[i]+i):
 		#have to do this b/c otherwise the variable won't be incremented right.
 		i+=1  
