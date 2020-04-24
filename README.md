@@ -29,13 +29,15 @@ This utility is written in Python and utilizes the Requests library, JSON, and t
 This script will let you target a vulnerable redis server that has the default configurations and no password set. Simply supply to it the username you want to target, the hostname, and what folder you want to save the ssh key to to hack the thing. Then it'll open up the ssh shell for you and login you leaving you with a shell on the remote machine. It's pure bash and only requires ssh, and redis-cli to run.
 ### Usage
 ./redis_insecurity.sh {username} {host_to_target} {target_directory}
-
 <br />
+
 ## Sam Copy
+
 This powershell script will dump all of the SAM Registry hive that contains the usernames and passwords of all users. This only works if you already an administrator. It's primary purpose is if you don't have metasploit to utilize the meteterpreter utility to dump the password for you. It creates the zip files and then shows the data as a base64 encoded string so that you can copy->paste it back to your own terminal if you don't have any other way to get files off of the machine. All of this is done in pure powershell.<br />
 <br />
 
 ## Natas 18, 25 Solvers
+
 These scripts are only here so that I have them publicly available so that students could have a copy of the script for their ITP-270 course when they were going to write/utilize tools entirely in Python that were related to the cybersecurity field. Natas18 is all about doing a session hijacker. It could have been done in burpsuite but instead I wrote it in Python utilizing Requests, and RegEx.<br />
 
 The natas 25 solver is here to show them how to bypass a directory traversal filter and also how to get the flag by messing with the user agent header field. Showing them how you can bypass security if the person didn't write the site properly.<br />
